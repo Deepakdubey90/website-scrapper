@@ -1,0 +1,28 @@
+from django.db import models
+from django.utils import timezone
+from meeting.models import Meeting
+from django.utils.translation import ugettext_lazy as _
+
+
+class Poll(models.Model):
+    meeting = models.ForeignKey(Meeting)
+    question = models.TextField()    
+    created_on = models.DateTimeField(
+        default=timezone.now,
+        verbose_name=_("Created on")
+    )
+    ended_on = models.DateTimeField(
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_("Ended On")
+    )
+    
+    def __str__(self):
+        return str(self.id)
+
+
+class PollOption(models.Model):
+    poll = models.ForeignKey(Poll)
+    option = models.CharField(max_length=32)
+    vote = models.IntegerField(default=0)

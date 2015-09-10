@@ -1,0 +1,76 @@
+import re
+import requests
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+from django.db import models
+from scrap_data.models import Scrap
+from django.core.management.base import Basecommand
+
+
+class Command(Basecommand):
+
+    url = "http://www.allagents.co.uk/rss/emoov/"
+    redditFile = urlopen(url)
+    redditcontent = redditFile.read()
+    redditFile.close()
+
+    print("script called!!!!!!")
+    content = redditcontent
+    soup = BeautifulSoup(content)
+    elements = soup.findAll('item')
+    print(elements, "soup value is ")
+    for element in elements:
+        title = element.find('title').text
+        description = element.find('description').text
+        pubdate = element.find('pubdate').text
+        link = element.find('link').text
+        guid = element.find('guid').text
+
+        record = Scrap(
+            title=title,
+            description=description,
+            pubdate=pubdate,
+            link=link,
+            guid=guid
+        )
+        record.save()
+        print("record saved!!!!!!!!!")
+
+"""
+redditAll = soup.find_all("div", class_="topnumber")
+
+for links in redditAll:
+print("HCL Contact Number:",links.text)
+"""
+
+
+
+
+
+
+
+
+
+
+"""
+def get_webpage():
+print("2 get web page called!!!!!")
+url = "http://www.allagents.co.uk/rss/emoov/"
+redditFile = urlopen(url)
+redditcontent = redditFile.read()
+redditFile.close()
+return redditcontent
+
+def scrap_data():
+print("script called!!!!!!")
+content = get_webpage()
+soup = BeautifulSoup(content)
+print(soup, "soup value is ")
+
+redditAll = soup.find_all("div", class_="topnumber")
+
+for links in redditAll:
+print("HCL Contact Number:",links.text)
+
+
+"""
